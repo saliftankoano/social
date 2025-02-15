@@ -12,9 +12,9 @@ const fontSans = FontSans({
 });
 
 export const metadata: Metadata = {
-  title: "Magic UI",
-  description: "The startup template from Magic UI",
-  icons: [{ rel: "icon", url: "/favicon.ico" }],
+  title: "VirallIQ",
+  description: "AI-powered social media content creation",
+  icons: [{ rel: "icon", url: "/logo.svg" }],
 };
 
 export default function RootLayout({

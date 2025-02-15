@@ -1,8 +1,10 @@
+import Image from "next/image";
+
 export default function ClientSection() {
   return (
     <section
       id="clients"
-      className="text-center mx-auto max-w-[80rem] px-6 md:px-8"
+      className="mx-auto max-w-[80rem] px-6 text-center md:px-8"
     >
       <div className="py-14">
         <div className="mx-auto max-w-screen-xl px-4 md:px-8">
@@ -12,34 +14,21 @@ export default function ClientSection() {
           <div className="mt-6">
             <ul className="flex flex-wrap items-center justify-center gap-x-10 gap-y-6 md:gap-x-16 [&_path]:fill-white">
               <li>
-                <img
-                  src={`https://cdn.magicui.design/companies/Google.svg`}
+                <Image
+                  src={`https://nogood.io/wp-content/uploads/2024/04/logo__no-good-yellow.svg`}
                   className="h-8 w-28 px-2 dark:brightness-0 dark:invert"
+                  alt="Google"
+                  width={100}
+                  height={100}
                 />
               </li>
               <li>
-                <img
-                  src={`https://cdn.magicui.design/companies/Microsoft.svg`}
+                <Image
+                  src={`https://cdn.prod.website-files.com/666741f97a0451dfa349bbc9/67a4a447772ba2374368ca3d_Goodie%20Logo%2BWordmark%20(1).svg`}
                   className="h-8 w-28 px-2 dark:brightness-0 dark:invert"
-                />
-              </li>
-              <li>
-                <img
-                  src={`https://cdn.magicui.design/companies/GitHub.svg`}
-                  className="h-8 w-28 px-2 dark:brightness-0 dark:invert"
-                />
-              </li>
-
-              <li>
-                <img
-                  src={`https://cdn.magicui.design/companies/Uber.svg`}
-                  className="h-8 w-28 px-2 dark:brightness-0 dark:invert"
-                />
-              </li>
-              <li>
-                <img
-                  src={`https://cdn.magicui.design/companies/Notion.svg`}
-                  className="h-8 w-28 px-2 dark:brightness-0 dark:invert"
+                  alt="Microsoft"
+                  width={100}
+                  height={100}
                 />
               </li>
             </ul>
