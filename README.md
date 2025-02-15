@@ -1,29 +1,61 @@
-# Create T3 App
+# Revid AI Content Generator
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+Transform your ideas into engaging video content across multiple platforms with AI-powered automation.
 
-## What's next? How do I make an app with this?
+## 🎯 Problem
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+Content creators and businesses face several challenges:
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+- Creating engaging video content is time-consuming
+- Maintaining consistent quality across multiple platforms is difficult
+- Professional video production is expensive
+- Voice-overs and background music selection are complex tasks
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+## 💡 Solution
 
-## Learn More
+Revid AI Content Generator provides an automated solution that:
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+- Transforms text scripts into professional TikTok-style videos
+- Generates AI voice-overs with natural-sounding voices
+- Automatically adds relevant visuals and media
+- Applies professional caption styles
+- Includes customizable talking avatars
+- Offers preset audio tracks and generation styles
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+## ⚡ Features
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+- **Script to Video**: Convert text scripts into engaging videos
+- **AI Voice Generation**: Choose from multiple voice options (Jessica, Brian)
+- **Media Generation**:
+  - Stock videos
+  - AI-generated moving images
+  - Custom AI videos
+- **Style Presets**: Multiple generation styles including LEONARDO, ANIME, REALISM, etc.
+- **Caption Presets**: Various caption styles (Basic, Revid, Hormozi, etc.)
+- **Background Audio**: Pre-selected professional audio tracks
+- **Avatar Integration**: Add talking avatars to your videos
+- **Aspect Ratio Options**: Support for both 9:16 (TikTok/Reels) and 1:1 (Square) formats
 
-## How do I deploy this?
+## 🛠 Tech Stack
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+- **Framework**: [Next.js 14](https://nextjs.org/) with App Router
+- **Language**: TypeScript
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **UI Components**:
+  - [Radix UI](https://www.radix-ui.com/)
+  - Custom components with modern design patterns
+- **Animation**: [Framer Motion](https://www.framer.com/motion/)
+- **API Integration**: Revid AI API for video generation
+- **Development Tools**:
+  - ESLint for code quality
+  - Prettier for code formatting
+  - TypeScript for type safety
+
+## 🚀 Getting Started
+
+1. Clone the repository
+2. Install dependencies `npm install`
+3. Create a `.env.local` file and add your Revid API key
+4. Start the development server `npm run dev`
+
+## 📦 Project Structure
