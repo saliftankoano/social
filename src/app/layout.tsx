@@ -2,8 +2,14 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 import type { Metadata } from "next";
-import { GeistSans } from "geist/font/sans";
+import { Inter as FontSans } from "next/font/google";
+
 import "./globals.css";
+
+const fontSans = FontSans({
+  subsets: ["latin"],
+  variable: "--font-sans",
+});
 
 export const metadata: Metadata = {
   title: "Magic UI",
@@ -21,7 +27,7 @@ export default function RootLayout({
       <body
         className={cn(
           "min-h-screen bg-background font-sans antialiased",
-          GeistSans.variable,
+          fontSans.variable,
         )}
       >
         <ThemeProvider
