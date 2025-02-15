@@ -12,6 +12,9 @@ export async function POST(request: Request) {
       captionPresetName: string;
     };
 
+    console.log(body);
+    console.log(env.REVID_API_KEY);
+
     const response = await fetch("https://www.revid.ai/api/public/v2/render", {
       method: "POST",
       headers: {

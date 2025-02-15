@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Send, CheckCircle2 } from "lucide-react";
+import { Loader2, Send, CheckCircle2, Video } from "lucide-react";
 import { LinkedInPost } from "@/components/social/linkedin-post";
 import { TwitterPost } from "@/components/social/twitter-post";
 import { useChat } from "@ai-sdk/react";
@@ -25,12 +25,24 @@ interface AIResponse {
   }>;
 }
 
+type VideoGenerationState = Record<number, boolean>;
+
+interface VideoGenerationResponse {
+  data: {
+    id: string;
+    status: string;
+  };
+}
+
 export default function PreviewPage() {
   const router = useRouter();
   const { prompt, platforms } = usePromptStore();
   const formRef = useRef<HTMLFormElement>(null);
   const [aiResponses, setAiResponses] = useState<AIResponse[]>([]);
   const [selectedResponseIndex, setSelectedResponseIndex] = useState<number>(0);
+  const [generatingVideo, setGeneratingVideo] = useState<VideoGenerationState>(
+    {},
+  );
 
   // If no prompt is set, redirect back to generate page
   useEffect(() => {
@@ -95,6 +107,38 @@ export default function PreviewPage() {
       if (form) {
         form.requestSubmit();
       }
+    }
+  };
+
+  const generateVideo = async (script: string, index: number) => {
+    setGeneratingVideo((prev) => ({ ...prev, [index]: true }));
+    try {
+      const response = await fetch("/api/revid", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          inputText: script,
+          hasToGenerateVoice: true,
+          hasToSearchMedia: true,
+          hasEnhancedGeneration: true,
+          hasAvatar: false,
+          captionPresetName: "Wrap 1",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = (await response.json()) as VideoGenerationResponse;
+      console.log("Video generation started:", data);
+      // You can add logic here to track the video generation status
+    } catch (error) {
+      console.error("Error generating video:", error);
+    } finally {
+      setGeneratingVideo((prev) => ({ ...prev, [index]: false }));
     }
   };
 
@@ -302,7 +346,26 @@ export default function PreviewPage() {
                           key={index}
                           className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm"
                         >
-                          <h3 className="mb-2 font-semibold">TikTok Script</h3>
+                          <div className="mb-4 flex items-center justify-between">
+                            <h3 className="font-semibold">TikTok Script</h3>
+                            <Button
+                              onClick={() => generateVideo(post.post, index)}
+                              disabled={generatingVideo[index]}
+                              className="gap-2"
+                            >
+                              {generatingVideo[index] ? (
+                                <>
+                                  <Loader2 className="h-4 w-4 animate-spin" />
+                                  Generating...
+                                </>
+                              ) : (
+                                <>
+                                  <Video className="h-4 w-4" />
+                                  Generate Video
+                                </>
+                              )}
+                            </Button>
+                          </div>
                           <div className="whitespace-pre-wrap text-sm">
                             {post.post.split(/(\[[^\]]*\])/g).map((part, i) => {
                               if (part.startsWith("[") && part.endsWith("]")) {
