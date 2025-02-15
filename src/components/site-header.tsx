@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
 import { AlignJustify, XIcon } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -100,7 +101,12 @@ export function SiteHeader() {
       <header className="animate-fade-in fixed left-0 top-0 z-50 w-full translate-y-[-1rem] border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
         <div className="container flex h-[3.5rem] items-center justify-between">
           <Link className="text-md flex items-center" href="/">
-            Virall IQ
+            <Image
+              src="/logo-vanilla.png"
+              alt="VirallIQ"
+              width={80}
+              height={15}
+            />
           </Link>
 
           <div className="ml-auto flex h-full items-center">
@@ -141,7 +147,12 @@ export function SiteHeader() {
         >
           <div className="container flex h-[3.5rem] items-center justify-between">
             <Link className="text-md flex items-center" href="/">
-              Virall IQ
+              <Image
+                src="/logo-vanilla.png"
+                alt="VirallIQ"
+                width={80}
+                height={15}
+              />
             </Link>
 
             <button
