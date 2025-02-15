@@ -119,12 +119,18 @@ export default function PreviewPage() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          inputText: script,
-          hasToGenerateVoice: true,
-          hasToSearchMedia: true,
-          hasEnhancedGeneration: true,
-          hasAvatar: false,
-          captionPresetName: "Wrap 1",
+          creationParams: {
+            inputText: script,
+            hasToGenerateVoice: false,
+            hasToSearchMedia: false,
+            hasEnhancedGeneration: false,
+            hasAvatar: false,
+            captionPresetName: "Wrap 1",
+            ratio: "9 / 16",
+            selectedAvatarType: "video/mp4",
+            nbGenerations: 1,
+            imageGenerationModel: "good",
+          },
         }),
       });
 
@@ -134,7 +140,6 @@ export default function PreviewPage() {
 
       const data = (await response.json()) as VideoGenerationResponse;
       console.log("Video generation started:", data);
-      // You can add logic here to track the video generation status
     } catch (error) {
       console.error("Error generating video:", error);
     } finally {
