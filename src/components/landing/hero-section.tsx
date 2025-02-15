@@ -7,6 +7,7 @@ import { ArrowRightIcon } from "@radix-ui/react-icons";
 import { useInView } from "framer-motion";
 import { useRef } from "react";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HeroSection() {
   const ref = useRef(null);
@@ -31,9 +32,14 @@ export default function HeroSection() {
         <br className="hidden md:block" /> with AI-powered automation. From
         prompts to perfect posts in seconds.
       </p>
-      <Button className="animate-fade-in translate-y-[-1rem] gap-1 rounded-lg text-white opacity-0 ease-in-out [--animation-delay:600ms] dark:text-black">
-        <span>Get Started for free </span>
-        <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
+      <Button
+        className="animate-fade-in translate-y-[-1rem] gap-1 rounded-lg text-white opacity-0 ease-in-out [--animation-delay:600ms] dark:text-black"
+        asChild
+      >
+        <Link href="/generate">
+          <span>Generate</span>
+          <ArrowRightIcon className="ml-1 size-4 transition-transform duration-300 ease-in-out group-hover:translate-x-1" />
+        </Link>
       </Button>
       <div
         ref={ref}
