@@ -303,19 +303,23 @@ export default function PreviewPage() {
                           className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm"
                         >
                           <h3 className="mb-2 font-semibold">TikTok Script</h3>
-                          <div className="prose prose-sm dark:prose-invert whitespace-pre-wrap text-sm [&>p:last-child]:mb-0 [&>p]:mb-3">
+                          <div className="whitespace-pre-wrap text-sm">
                             {post.post.split(/(\[[^\]]*\])/g).map((part, i) => {
                               if (part.startsWith("[") && part.endsWith("]")) {
                                 return (
                                   <span
                                     key={i}
-                                    className="block rounded bg-muted/50 px-2 py-1 text-muted-foreground"
+                                    className="mb-2 block rounded bg-muted/50 px-2 py-1 text-muted-foreground"
                                   >
                                     {part}
                                   </span>
                                 );
                               }
-                              return <span key={i}>{part}</span>;
+                              return (
+                                <span key={i} className="mb-2 block">
+                                  {part}
+                                </span>
+                              );
                             })}
                           </div>
                         </div>

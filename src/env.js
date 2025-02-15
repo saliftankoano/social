@@ -8,6 +8,7 @@ export const env = createEnv({
    */
   server: {
     GROQ_API_KEY: z.string(),
+    REVID_API_KEY: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
   },
 
@@ -27,6 +28,7 @@ export const env = createEnv({
   runtimeEnv: {
     GROQ_API_KEY: process.env.GROQ_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
+    REVID_API_KEY: process.env.REVID_API_KEY,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
   /**
