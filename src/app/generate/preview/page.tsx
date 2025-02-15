@@ -7,6 +7,7 @@ import { LinkedInPost } from "@/components/social/linkedin-post";
 import { TwitterPost } from "@/components/social/twitter-post";
 import { useChat } from "@ai-sdk/react";
 import { cn } from "@/lib/utils";
+import { useRef, useEffect } from "react";
 
 export default function PreviewPage() {
   const {
@@ -18,6 +19,29 @@ export default function PreviewPage() {
     handleSubmit,
     reload,
   } = useChat({});
+
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "0px";
+      const scrollHeight = textarea.scrollHeight;
+      textarea.style.height = scrollHeight + "px";
+    }
+  }, [input]);
+
+  // Handle keyboard shortcuts
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      const form = e.currentTarget.closest("form");
+      if (form) {
+        form.requestSubmit();
+      }
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -79,14 +103,16 @@ export default function PreviewPage() {
         {/* Chat Input */}
         <div className="border-t bg-background p-4">
           <form onSubmit={handleSubmit}>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2">
               <Textarea
+                ref={textareaRef}
                 name="prompt"
                 value={input}
                 disabled={status !== "ready"}
                 onChange={handleInputChange}
-                placeholder="Type a message..."
-                className="min-h-[44px] resize-none rounded-2xl border-muted-foreground/20 bg-muted/50 px-4 py-3"
+                onKeyDown={handleKeyDown}
+                placeholder="Type a message... (⌘/Ctrl + Enter to send)"
+                className="max-h-[200px] min-h-[44px] resize-none rounded-2xl border-muted-foreground/20 bg-muted/50 px-4 py-3"
                 rows={1}
               />
               <Button
@@ -95,7 +121,7 @@ export default function PreviewPage() {
                 disabled={status !== "ready"}
                 className="h-11 w-11 shrink-0 rounded-full"
               >
-                <Send className="h-5 w-5" />
+                <Send className="h-5 w-5 -translate-x-[1px] translate-y-[1px]" />
               </Button>
             </div>
           </form>
