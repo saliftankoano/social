@@ -2,24 +2,35 @@
 
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Loader2, Send } from "lucide-react";
+import { Loader2, Send, CheckCircle2 } from "lucide-react";
 import { LinkedInPost } from "@/components/social/linkedin-post";
 import { TwitterPost } from "@/components/social/twitter-post";
 import { useChat } from "@ai-sdk/react";
 import { cn } from "@/lib/utils";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
 import { usePromptStore } from "@/lib/store";
 import { useRouter } from "next/navigation";
+import ReactMarkdown from "react-markdown";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 
+interface AIResponse {
+  posts: Array<{
+    reasoning: string;
+    post: string;
+    platform: string;
+  }>;
+}
+
 export default function PreviewPage() {
   const router = useRouter();
-  const { prompt } = usePromptStore();
+  const { prompt, platforms } = usePromptStore();
   const formRef = useRef<HTMLFormElement>(null);
+  const [aiResponses, setAiResponses] = useState<AIResponse[]>([]);
+  const [selectedResponseIndex, setSelectedResponseIndex] = useState<number>(0);
 
   // If no prompt is set, redirect back to generate page
   useEffect(() => {
@@ -40,19 +51,29 @@ export default function PreviewPage() {
   } = useChat({
     api: "/api/chat",
     initialMessages: [],
+    onFinish: (message) => {
+      try {
+        // Try to parse the AI response
+        const response = JSON.parse(message.content) as AIResponse;
+        setAiResponses((prev) => [...prev, response]);
+        setSelectedResponseIndex(aiResponses.length); // Select the new response
+      } catch (e) {
+        console.error("Failed to parse AI response:", e);
+      }
+    },
   });
 
   // Send initial prompt when component mounts
   useEffect(() => {
     if (prompt && messages.length === 0) {
       // Set the input value
-      setInput(prompt);
+      setInput(prompt + " Target platforms: " + platforms.join(", "));
       // Submit after a short delay to ensure the input is set
       setTimeout(() => {
         formRef.current?.requestSubmit();
       }, 100);
     }
-  }, [prompt, messages.length, setInput]);
+  }, [prompt, platforms, messages.length, setInput]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -89,29 +110,93 @@ export default function PreviewPage() {
           <div className="flex h-full flex-col border-r">
             <div className="flex-1 space-y-3 overflow-auto p-4">
               {/* Chat Messages */}
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={cn(
-                    "flex",
-                    message.role === "user" ? "justify-end" : "justify-start",
-                  )}
-                >
-                  <div
-                    className={cn(
-                      "max-w-[85%] rounded-2xl px-4 py-3 text-sm",
-                      message.role === "user"
-                        ? "bg-primary text-primary-foreground"
-                        : "bg-muted text-muted-foreground",
-                    )}
-                  >
-                    {message.content}
-                  </div>
-                </div>
-              ))}
+              {messages.map((message, index) => {
+                if (message.role === "user") {
+                  return (
+                    <div key={message.id} className="flex justify-end">
+                      <div className="max-w-[85%] rounded-2xl bg-primary px-4 py-3 text-sm text-primary-foreground">
+                        {message.content}
+                      </div>
+                    </div>
+                  );
+                }
+
+                // Only show custom UI for assistant messages that are JSON
+                try {
+                  JSON.parse(message.content);
+                  const revisionNumber = Math.floor(index / 2);
+                  return (
+                    <div
+                      key={message.id}
+                      className="flex flex-col justify-start gap-1"
+                    >
+                      <span className="ml-1 text-xs text-muted-foreground">
+                        Click to preview this version
+                      </span>
+                      <button
+                        onClick={() => setSelectedResponseIndex(revisionNumber)}
+                        className={cn(
+                          "group flex max-w-[85%] items-center gap-3 rounded-2xl border px-4 py-3 text-sm transition-all hover:border-primary/50 hover:bg-muted/80",
+                          selectedResponseIndex === revisionNumber
+                            ? "border-primary/50 bg-muted text-foreground shadow-sm"
+                            : "border-transparent bg-muted/50 text-muted-foreground",
+                        )}
+                      >
+                        <div className="flex flex-col items-start gap-0.5">
+                          <span className="font-medium">
+                            Revision {revisionNumber + 1}
+                          </span>
+                          <span className="text-xs text-muted-foreground">
+                            {aiResponses[revisionNumber]?.posts.length} posts
+                            generated
+                          </span>
+                        </div>
+                        {selectedResponseIndex === revisionNumber && (
+                          <CheckCircle2 className="ml-auto h-4 w-4 text-primary" />
+                        )}
+                      </button>
+                    </div>
+                  );
+                } catch {
+                  // If streaming JSON or other message, show loading state
+                  if (
+                    status === "streaming" &&
+                    message === messages[messages.length - 1]
+                  ) {
+                    return (
+                      <div
+                        key={message.id}
+                        className="flex flex-col justify-start gap-1"
+                      >
+                        <span className="ml-1 text-xs text-muted-foreground">
+                          Generating new version...
+                        </span>
+                        <div className="max-w-[85%] animate-pulse rounded-2xl border border-transparent bg-muted/50 px-4 py-3 text-sm text-muted-foreground">
+                          <div className="flex items-center gap-3">
+                            <div className="flex flex-col gap-0.5">
+                              <div className="h-4 w-24 rounded bg-muted"></div>
+                              <div className="h-3 w-32 rounded bg-muted"></div>
+                            </div>
+                            <Loader2 className="ml-auto h-4 w-4 animate-spin" />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  // For any other non-JSON messages
+                  return (
+                    <div key={message.id} className="flex justify-start">
+                      <div className="max-w-[85%] rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+                        {message.content}
+                      </div>
+                    </div>
+                  );
+                }
+              })}
 
               {/* Loading States */}
-              {(status === "submitted" || status === "streaming") && (
+              {status === "submitted" && (
                 <div className="flex justify-start">
                   <div className="flex items-center gap-2 rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -176,44 +261,69 @@ export default function PreviewPage() {
           <div className="flex h-full flex-col bg-muted/50">
             <div className="flex-1 overflow-y-auto p-8">
               <div className="space-y-6">
-                <LinkedInPost
-                  avatar="/avatars/user.png"
-                  name="John Doe"
-                  headline="Senior Software Engineer at Tech Corp"
-                  timePosted="1h"
-                  content="🚀 Why I Switched to TypeScript and Never Looked Back
-
-After 5 years of JavaScript development, making the switch to TypeScript was a game-changer. Here's why:
-
-✅ Catch bugs before they hit production
-✅ Better IDE support and refactoring
-✅ Self-documenting code
-✅ Improved team collaboration
-
-The initial learning curve is worth it. Your future self will thank you.
-
-#TypeScript #WebDevelopment #Programming #SoftwareEngineering"
-                />
-
-                <TwitterPost
-                  avatar="/avatars/user.png"
-                  name="John Doe"
-                  handle="johndoe"
-                  verified={true}
-                  timePosted="1h"
-                  content="🚀 Why I Switched to TypeScript and Never Looked Back
-
-After 5 years of JavaScript development, making the switch to TypeScript was a game-changer. Here's why:
-
-✅ Catch bugs before they hit production
-✅ Better IDE support and refactoring
-✅ Self-documenting code
-✅ Improved team collaboration
-
-The initial learning curve is worth it. Your future self will thank you.
-
-#TypeScript #WebDevelopment #Programming"
-                />
+                {aiResponses[selectedResponseIndex]?.posts.map(
+                  (post, index) => {
+                    if (post.platform === "linkedin") {
+                      return (
+                        <LinkedInPost
+                          key={index}
+                          avatar="/avatars/user.png"
+                          name="John Doe"
+                          headline="Senior Software Engineer at Tech Corp"
+                          timePosted="Just now"
+                          content={
+                            <div className="prose prose-sm dark:prose-invert">
+                              <ReactMarkdown>{post.post}</ReactMarkdown>
+                            </div>
+                          }
+                        />
+                      );
+                    }
+                    if (post.platform === "twitter") {
+                      return (
+                        <TwitterPost
+                          key={index}
+                          avatar="/avatars/user.png"
+                          name="John Doe"
+                          handle="johndoe"
+                          verified={true}
+                          timePosted="Just now"
+                          content={
+                            <div className="prose prose-sm dark:prose-invert">
+                              <ReactMarkdown>{post.post}</ReactMarkdown>
+                            </div>
+                          }
+                        />
+                      );
+                    }
+                    if (post.platform === "tiktok") {
+                      return (
+                        <div
+                          key={index}
+                          className="rounded-lg border bg-card p-4 text-card-foreground shadow-sm"
+                        >
+                          <h3 className="mb-2 font-semibold">TikTok Script</h3>
+                          <div className="prose prose-sm dark:prose-invert whitespace-pre-wrap text-sm [&>p:last-child]:mb-0 [&>p]:mb-3">
+                            {post.post.split(/(\[[^\]]*\])/g).map((part, i) => {
+                              if (part.startsWith("[") && part.endsWith("]")) {
+                                return (
+                                  <span
+                                    key={i}
+                                    className="block rounded bg-muted/50 px-2 py-1 text-muted-foreground"
+                                  >
+                                    {part}
+                                  </span>
+                                );
+                              }
+                              return <span key={i}>{part}</span>;
+                            })}
+                          </div>
+                        </div>
+                      );
+                    }
+                    return null;
+                  },
+                )}
               </div>
             </div>
           </div>

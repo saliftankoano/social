@@ -9,6 +9,7 @@ import {
   Share,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { type ReactNode } from "react";
 
 interface TwitterPostProps {
   avatar: string;
@@ -16,7 +17,7 @@ interface TwitterPostProps {
   handle: string;
   verified?: boolean;
   timePosted: string;
-  content: string;
+  content: ReactNode;
   likes?: number;
   reposts?: number;
   comments?: number;
@@ -91,9 +92,9 @@ export function TwitterPost({
         </div>
 
         <div className="mt-3">
-          <p className="whitespace-pre-wrap text-[15px] text-[#0f1419] dark:text-[#e7e9ea]">
+          <div className="whitespace-pre-wrap text-[15px] text-[#0f1419] dark:text-[#e7e9ea]">
             {content}
-          </p>
+          </div>
           {image && (
             <div className="mt-3 overflow-hidden rounded-2xl border border-[#eff3f4] dark:border-[#2f3336]">
               <img

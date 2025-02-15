@@ -8,13 +8,14 @@ import {
   Repeat,
   Send,
 } from "lucide-react";
+import { type ReactNode } from "react";
 
 interface LinkedInPostProps {
   avatar: string;
   name: string;
   headline: string;
   timePosted: string;
-  content: string;
+  content: ReactNode;
   likes?: number;
   comments?: number;
   reposts?: number;

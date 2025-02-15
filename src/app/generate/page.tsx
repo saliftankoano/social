@@ -5,15 +5,28 @@ import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { usePromptStore } from "@/lib/store";
+import { type Platform } from "@/lib/store";
 import { Sparkles, ArrowUp } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { type FormEvent, useState, useRef, useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 export default function GeneratePage() {
   const router = useRouter();
-  const { setPrompt } = usePromptStore();
+  const { setPrompt, setPlatforms, platforms } = usePromptStore();
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const togglePlatform = (platform: Platform) => {
+    if (platforms.includes(platform)) {
+      // Remove platform if it's not the last one
+      if (platforms.length > 1) {
+        setPlatforms(platforms.filter((p) => p !== platform));
+      }
+    } else {
+      setPlatforms([...platforms, platform]);
+    }
+  };
 
   // Auto-resize textarea
   useEffect(() => {
@@ -85,14 +98,41 @@ export default function GeneratePage() {
 
                         <div className="border-t px-4 py-3">
                           <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" className="rounded-full">
-                              Professional
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "rounded-full transition-colors",
+                                platforms.includes("tiktok") &&
+                                  "border-primary bg-primary text-primary-foreground",
+                              )}
+                              onClick={() => togglePlatform("tiktok")}
+                            >
+                              TikTok
                             </Button>
-                            <Button variant="outline" className="rounded-full">
-                              Casual
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "rounded-full transition-colors",
+                                platforms.includes("twitter") &&
+                                  "border-primary bg-primary text-primary-foreground",
+                              )}
+                              onClick={() => togglePlatform("twitter")}
+                            >
+                              𝕏 / Twitter
                             </Button>
-                            <Button variant="outline" className="rounded-full">
-                              Creative
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "rounded-full transition-colors",
+                                platforms.includes("linkedin") &&
+                                  "border-primary bg-primary text-primary-foreground",
+                              )}
+                              onClick={() => togglePlatform("linkedin")}
+                            >
+                              LinkedIn
                             </Button>
                             <div className="flex-1" />
                             <Button
@@ -138,14 +178,41 @@ export default function GeneratePage() {
 
                         <div className="border-t px-4 py-3">
                           <div className="flex flex-wrap gap-2">
-                            <Button variant="outline" className="rounded-full">
-                              Professional
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "rounded-full transition-colors",
+                                platforms.includes("tiktok") &&
+                                  "border-primary bg-primary text-primary-foreground",
+                              )}
+                              onClick={() => togglePlatform("tiktok")}
+                            >
+                              TikTok
                             </Button>
-                            <Button variant="outline" className="rounded-full">
-                              Casual
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "rounded-full transition-colors",
+                                platforms.includes("twitter") &&
+                                  "border-primary bg-primary text-primary-foreground",
+                              )}
+                              onClick={() => togglePlatform("twitter")}
+                            >
+                              𝕏 / Twitter
                             </Button>
-                            <Button variant="outline" className="rounded-full">
-                              Creative
+                            <Button
+                              type="button"
+                              variant="outline"
+                              className={cn(
+                                "rounded-full transition-colors",
+                                platforms.includes("linkedin") &&
+                                  "border-primary bg-primary text-primary-foreground",
+                              )}
+                              onClick={() => togglePlatform("linkedin")}
+                            >
+                              LinkedIn
                             </Button>
                             <div className="flex-1" />
                           </div>
