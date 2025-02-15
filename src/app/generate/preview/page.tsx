@@ -8,6 +8,8 @@ import { TwitterPost } from "@/components/social/twitter-post";
 import { useChat } from "@ai-sdk/react";
 import { cn } from "@/lib/utils";
 import { useRef, useEffect } from "react";
+import { usePromptStore } from "@/lib/store";
+import { useRouter } from "next/navigation";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -15,6 +17,17 @@ import {
 } from "@/components/ui/resizable";
 
 export default function PreviewPage() {
+  const router = useRouter();
+  const { prompt } = usePromptStore();
+  const formRef = useRef<HTMLFormElement>(null);
+
+  // If no prompt is set, redirect back to generate page
+  useEffect(() => {
+    if (!prompt) {
+      router.push("/generate");
+    }
+  }, [prompt, router]);
+
   const {
     messages,
     input,
@@ -23,7 +36,23 @@ export default function PreviewPage() {
     handleInputChange,
     handleSubmit,
     reload,
-  } = useChat({});
+    setInput,
+  } = useChat({
+    api: "/api/chat",
+    initialMessages: [],
+  });
+
+  // Send initial prompt when component mounts
+  useEffect(() => {
+    if (prompt && messages.length === 0) {
+      // Set the input value
+      setInput(prompt);
+      // Submit after a short delay to ensure the input is set
+      setTimeout(() => {
+        formRef.current?.requestSubmit();
+      }, 100);
+    }
+  }, [prompt, messages.length, setInput]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -48,6 +77,10 @@ export default function PreviewPage() {
     }
   };
 
+  if (!prompt) {
+    return null;
+  }
+
   return (
     <div className="h-screen w-full">
       <ResizablePanelGroup direction="horizontal" className="h-full">
@@ -56,9 +89,9 @@ export default function PreviewPage() {
           <div className="flex h-full flex-col border-r">
             <div className="flex-1 space-y-3 overflow-auto p-4">
               {/* Chat Messages */}
-              {messages.map((message, index) => (
+              {messages.map((message) => (
                 <div
-                  key={index}
+                  key={message.id}
                   className={cn(
                     "flex",
                     message.role === "user" ? "justify-end" : "justify-start",
@@ -109,7 +142,7 @@ export default function PreviewPage() {
 
             {/* Chat Input */}
             <div className="border-t bg-background p-4">
-              <form onSubmit={handleSubmit}>
+              <form ref={formRef} onSubmit={handleSubmit}>
                 <div className="flex items-center gap-2">
                   <Textarea
                     ref={textareaRef}

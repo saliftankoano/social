@@ -1,10 +1,49 @@
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { usePromptStore } from "@/lib/store";
 import { Sparkles, ArrowUp } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState, useRef, useEffect } from "react";
 
 export default function GeneratePage() {
+  const router = useRouter();
+  const { setPrompt } = usePromptStore();
+  const [input, setInput] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  // Auto-resize textarea
+  useEffect(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = "0px";
+      const scrollHeight = textarea.scrollHeight;
+      textarea.style.height = scrollHeight + "px";
+    }
+  }, [input]);
+
+  // Handle keyboard shortcuts
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+      e.preventDefault();
+      const form = e.currentTarget.closest("form");
+      if (form) {
+        form.requestSubmit();
+      }
+    }
+  };
+
+  const handleSubmit = (e: FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    setPrompt(input.trim());
+    router.push("/generate/preview");
+  };
+
   return (
     <div>
       {/* Hero Section */}
@@ -28,77 +67,93 @@ export default function GeneratePage() {
                 <TabsTrigger value="manual">Manual</TabsTrigger>
               </TabsList>
               <TabsContent value="ai">
-                <div className="relative">
-                  <div className="relative rounded-xl border bg-background shadow-sm">
-                    <div className="flex flex-col">
-                      <div className="flex items-start gap-3 p-4">
-                        <Textarea
-                          placeholder="Make me a ragebait post about why typescript on the backend is great to attract soydevs to engage with my post"
-                          className="flex-1 resize-none border-0 bg-transparent p-0 text-lg shadow-none focus-visible:ring-0"
-                          rows={1}
-                        />
-                      </div>
+                <form onSubmit={handleSubmit}>
+                  <div className="relative">
+                    <div className="relative rounded-xl border bg-background shadow-sm">
+                      <div className="flex flex-col">
+                        <div className="flex items-start gap-3 p-4">
+                          <Textarea
+                            ref={textareaRef}
+                            placeholder="Make me a ragebait post about why typescript on the backend is great to attract soydevs to engage with my post"
+                            className="flex-1 resize-none border-0 bg-transparent p-0 text-lg shadow-none focus-visible:ring-0"
+                            rows={1}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                          />
+                        </div>
 
-                      <div className="border-t px-4 py-3">
-                        <div className="flex flex-wrap gap-2">
-                          <Button variant="outline" className="rounded-full">
-                            Professional
-                          </Button>
-                          <Button variant="outline" className="rounded-full">
-                            Casual
-                          </Button>
-                          <Button variant="outline" className="rounded-full">
-                            Creative
-                          </Button>
-                          <div className="flex-1" />
-                          <Button className="gap-2 rounded-full">
-                            Generate
-                            <Sparkles className="h-4 w-4" />
-                          </Button>
+                        <div className="border-t px-4 py-3">
+                          <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" className="rounded-full">
+                              Professional
+                            </Button>
+                            <Button variant="outline" className="rounded-full">
+                              Casual
+                            </Button>
+                            <Button variant="outline" className="rounded-full">
+                              Creative
+                            </Button>
+                            <div className="flex-1" />
+                            <Button
+                              type="submit"
+                              className="gap-2 rounded-full"
+                            >
+                              Generate
+                              <Sparkles className="h-4 w-4" />
+                            </Button>
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </form>
               </TabsContent>
               <TabsContent value="manual">
-                <div className="relative">
-                  <div className="relative rounded-xl border bg-background shadow-sm">
-                    <div className="flex flex-col">
-                      <div className="flex items-start gap-3 p-4">
-                        <Textarea
-                          placeholder="Python is the best language ever created..."
-                          className="flex-1 resize-none border-0 bg-transparent p-0 text-lg shadow-none focus-visible:ring-0"
-                          rows={1}
-                        />
-                        <div className="mt-2 flex items-center gap-2">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="rounded-lg"
-                          >
-                            <ArrowUp />
-                          </Button>
+                <form onSubmit={handleSubmit}>
+                  <div className="relative">
+                    <div className="relative rounded-xl border bg-background shadow-sm">
+                      <div className="flex flex-col">
+                        <div className="flex items-start gap-3 p-4">
+                          <Textarea
+                            ref={textareaRef}
+                            placeholder="Python is the best language ever created..."
+                            className="flex-1 resize-none border-0 bg-transparent p-0 text-lg shadow-none focus-visible:ring-0"
+                            rows={1}
+                            value={input}
+                            onChange={(e) => setInput(e.target.value)}
+                            onKeyDown={handleKeyDown}
+                          />
+                          <div className="mt-2 flex items-center gap-2">
+                            <Button
+                              type="submit"
+                              variant="ghost"
+                              size="icon"
+                              className="rounded-lg"
+                            >
+                              <ArrowUp />
+                            </Button>
+                          </div>
                         </div>
-                      </div>
 
-                      <div className="border-t px-4 py-3">
-                        <div className="flex flex-wrap gap-2">
-                          <Button variant="outline" className="rounded-full">
-                            Professional
-                          </Button>
-                          <Button variant="outline" className="rounded-full">
-                            Casual
-                          </Button>
-                          <Button variant="outline" className="rounded-full">
-                            Creative
-                          </Button>
-                          <div className="flex-1" />
+                        <div className="border-t px-4 py-3">
+                          <div className="flex flex-wrap gap-2">
+                            <Button variant="outline" className="rounded-full">
+                              Professional
+                            </Button>
+                            <Button variant="outline" className="rounded-full">
+                              Casual
+                            </Button>
+                            <Button variant="outline" className="rounded-full">
+                              Creative
+                            </Button>
+                            <div className="flex-1" />
+                          </div>
                         </div>
                       </div>
                     </div>
                   </div>
-                </div>
+                </form>
               </TabsContent>
             </Tabs>
           </div>
