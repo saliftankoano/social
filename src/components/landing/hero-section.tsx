@@ -59,7 +59,7 @@ export default function HeroSection() {
           />
 
           <Image
-            src="/hero-dark.png"
+            src="/landing.png"
             alt="Hero Image"
             className="relative hidden h-full w-full rounded-[inherit] border object-contain dark:block"
             width={800}
