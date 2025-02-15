@@ -18,18 +18,18 @@ export default function HeroSection() {
     >
       <div className="backdrop-filter-[12px] animate-fade-in group inline-flex h-7 translate-y-[-1rem] items-center justify-between gap-1 rounded-full border border-white/5 bg-white/10 px-3 text-xs text-white opacity-0 transition-all ease-in hover:cursor-pointer hover:bg-white/20 dark:text-black">
         <TextShimmer className="inline-flex items-center justify-center">
-          <span>✨ Introducing Magic UI Template</span>{" "}
+          <span>✨ Create content for multiple platforms in seconds</span>{" "}
           <ArrowRightIcon className="ml-1 size-3 transition-transform duration-300 ease-in-out group-hover:translate-x-0.5" />
         </TextShimmer>
       </div>
       <h1 className="animate-fade-in translate-y-[-1rem] text-balance bg-gradient-to-br from-black from-30% to-black/40 bg-clip-text py-6 text-5xl font-medium leading-none tracking-tighter text-transparent opacity-0 [--animation-delay:200ms] dark:from-white dark:to-white/40 sm:text-6xl md:text-7xl lg:text-8xl">
-        Magic UI is the new way
-        <br className="hidden md:block" /> to build landing pages.
+        Turn 1 idea into
+        <br className="hidden md:block" /> content for every platform
       </h1>
       <p className="animate-fade-in mb-12 translate-y-[-1rem] text-balance text-lg tracking-tight text-gray-400 opacity-0 [--animation-delay:400ms] md:text-xl">
-        Beautifully designed, animated components and templates built with
-        <br className="hidden md:block" /> Tailwind CSS, React, and Framer
-        Motion.
+        Generate engaging content for Twitter, LinkedIn, TikTok, and blog posts
+        <br className="hidden md:block" /> with AI-powered automation. From
+        prompts to perfect posts in seconds.
       </p>
       <Button className="animate-fade-in translate-y-[-1rem] gap-1 rounded-lg text-white opacity-0 ease-in-out [--animation-delay:600ms] dark:text-black">
         <span>Get Started for free </span>
