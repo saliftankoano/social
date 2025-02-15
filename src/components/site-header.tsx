@@ -97,10 +97,10 @@ export function SiteHeader() {
 
   return (
     <>
-      <header className="fixed left-0 top-0 z-50 w-full translate-y-[-1rem] animate-fade-in border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
+      <header className="animate-fade-in fixed left-0 top-0 z-50 w-full translate-y-[-1rem] border-b opacity-0 backdrop-blur-[12px] [--animation-delay:600ms]">
         <div className="container flex h-[3.5rem] items-center justify-between">
           <Link className="text-md flex items-center" href="/">
-            Magic UI
+            Virall IQ
           </Link>
 
           <div className="ml-auto flex h-full items-center">
@@ -110,7 +110,7 @@ export function SiteHeader() {
             <Link
               className={cn(
                 buttonVariants({ variant: "secondary" }),
-                "mr-6 text-sm"
+                "mr-6 text-sm",
               )}
               href="/signup"
             >
@@ -133,15 +133,15 @@ export function SiteHeader() {
           variants={mobilenavbarVariant}
           animate={hamburgerMenuIsOpen ? "animate" : "exit"}
           className={cn(
-            `fixed left-0 top-0 z-50 h-screen w-full overflow-auto bg-background/70 backdrop-blur-[12px] `,
+            `fixed left-0 top-0 z-50 h-screen w-full overflow-auto bg-background/70 backdrop-blur-[12px]`,
             {
               "pointer-events-none": !hamburgerMenuIsOpen,
-            }
+            },
           )}
         >
           <div className="container flex h-[3.5rem] items-center justify-between">
             <Link className="text-md flex items-center" href="/">
-              Magic UI
+              Virall IQ
             </Link>
 
             <button
@@ -153,7 +153,7 @@ export function SiteHeader() {
             </button>
           </div>
           <motion.ul
-            className={`flex flex-col md:flex-row md:items-center uppercase md:normal-case ease-in`}
+            className={`flex flex-col uppercase ease-in md:flex-row md:items-center md:normal-case`}
             variants={containerVariants}
             initial="initial"
             animate={hamburgerMenuIsOpen ? "open" : "exit"}
@@ -162,7 +162,7 @@ export function SiteHeader() {
               <motion.li
                 variants={mobileLinkVar}
                 key={item.id}
-                className="border-grey-dark pl-6 py-0.5 border-b md:border-none"
+                className="border-grey-dark border-b py-0.5 pl-6 md:border-none"
               >
                 <Link
                   className={`hover:text-grey flex h-[var(--navigation-height)] w-full items-center text-xl transition-[color,transform] duration-300 md:translate-y-0 md:text-sm md:transition-colors ${
