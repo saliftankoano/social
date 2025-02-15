@@ -16,6 +16,13 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 interface AIResponse {
   posts: Array<{
@@ -43,6 +50,9 @@ export default function PreviewPage() {
   const [generatingVideo, setGeneratingVideo] = useState<VideoGenerationState>(
     {},
   );
+  const [videoDialogOpen, setVideoDialogOpen] = useState(false);
+  const [isSimulatingGeneration, setIsSimulatingGeneration] = useState(false);
+  const [generationProgress, setGenerationProgress] = useState(0);
 
   // If no prompt is set, redirect back to generate page
   useEffect(() => {
@@ -86,6 +96,31 @@ export default function PreviewPage() {
       }, 100);
     }
   }, [prompt, platforms, messages.length, setInput]);
+
+  // Override TikTok response with fixed text
+  useEffect(() => {
+    if (aiResponses.length > 0) {
+      setAiResponses((prevResponses) =>
+        prevResponses.map((response) => ({
+          ...response,
+          posts: response.posts.map((post) =>
+            post.platform === "tiktok"
+              ? {
+                  ...post,
+                  post: `Instant beauty hack that makeup artists don't want you to know about.
+
+Stop spending money on fancy primers. Your face moisturizer mixed with one drop of face oil creates the perfect makeup base. Apply it while your skin is slightly damp.
+
+This combo gives you that expensive glazed donut look and makes foundation glide on like butter. Plus your makeup will last twice as long.
+
+Been doing this for years, saving hundreds on primers.`,
+                }
+              : post,
+          ),
+        })),
+      );
+    }
+  }, [aiResponses.length]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -146,6 +181,36 @@ export default function PreviewPage() {
       setGeneratingVideo((prev) => ({ ...prev, [index]: false }));
     }
   };
+
+  // Handle video generation simulation
+  const simulateVideoGeneration = () => {
+    setIsSimulatingGeneration(true);
+    setGenerationProgress(0);
+    setVideoDialogOpen(true);
+
+    // Update progress every second for 12 seconds
+    const interval = setInterval(() => {
+      setGenerationProgress((prev) => {
+        const newProgress = prev + 100 / 12; // Divide total progress by 12 seconds
+        return newProgress >= 100 ? 100 : newProgress;
+      });
+    }, 1000);
+
+    // After 12 seconds, clear interval and show video
+    setTimeout(() => {
+      clearInterval(interval);
+      setIsSimulatingGeneration(false);
+      setGenerationProgress(100);
+    }, 12000);
+  };
+
+  // Reset simulation when dialog closes
+  useEffect(() => {
+    if (!videoDialogOpen) {
+      setIsSimulatingGeneration(false);
+      setGenerationProgress(0);
+    }
+  }, [videoDialogOpen]);
 
   if (!prompt) {
     return null;
@@ -353,23 +418,57 @@ export default function PreviewPage() {
                         >
                           <div className="mb-4 flex items-center justify-between">
                             <h3 className="font-semibold">TikTok Script</h3>
-                            <Button
-                              onClick={() => generateVideo(post.post, index)}
-                              disabled={generatingVideo[index]}
-                              className="gap-2"
+                            <Dialog
+                              open={videoDialogOpen}
+                              onOpenChange={setVideoDialogOpen}
                             >
-                              {generatingVideo[index] ? (
-                                <>
-                                  <Loader2 className="h-4 w-4 animate-spin" />
-                                  Generating...
-                                </>
-                              ) : (
-                                <>
+                              <DialogTrigger asChild>
+                                <Button
+                                  className="gap-2"
+                                  onClick={(e) => {
+                                    e.preventDefault();
+                                    simulateVideoGeneration();
+                                  }}
+                                >
                                   <Video className="h-4 w-4" />
-                                  Generate Video
-                                </>
-                              )}
-                            </Button>
+                                  Preview Video
+                                </Button>
+                              </DialogTrigger>
+                              <DialogContent className="sm:max-w-[425px]">
+                                <DialogHeader>
+                                  <DialogTitle>Video Preview</DialogTitle>
+                                </DialogHeader>
+                                <div className="mt-4">
+                                  {isSimulatingGeneration ? (
+                                    <div className="space-y-4 p-4">
+                                      <div className="flex items-center justify-center gap-2">
+                                        <Loader2 className="h-4 w-4 animate-spin" />
+                                        <span>
+                                          Generating video...{" "}
+                                          {Math.round(generationProgress)}%
+                                        </span>
+                                      </div>
+                                      <div className="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                                        <div
+                                          className="h-full bg-primary transition-all duration-300"
+                                          style={{
+                                            width: `${generationProgress}%`,
+                                          }}
+                                        />
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <video
+                                      src="/video.mp4"
+                                      controls
+                                      className="w-full rounded-lg"
+                                      autoPlay
+                                      loop
+                                    />
+                                  )}
+                                </div>
+                              </DialogContent>
+                            </Dialog>
                           </div>
                           <div className="whitespace-pre-wrap text-sm">
                             {post.post.split(/(\[[^\]]*\])/g).map((part, i) => {

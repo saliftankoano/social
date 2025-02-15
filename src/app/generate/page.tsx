@@ -17,6 +17,26 @@ export default function GeneratePage() {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
+  // Example prompts for each card
+  const examplePrompts = {
+    linkedin:
+      "Create a viral post about unconventional beauty product hacks that save money and work better than expensive alternatives. Include tips about using common household items for skincare and makeup, focusing on sustainability and affordability.",
+    twitter:
+      "Create a controversial but engaging tweet about why TypeScript is actually making developers worse at JavaScript. Make it spicy but backed with some logical arguments.",
+    tiktok:
+      "Generate a script for a day-in-the-life TikTok that shows the reality vs expectations of being a remote developer, with a touch of humor and relatable moments.",
+    reddit:
+      "Write a detailed AITA-style post about choosing PHP for a new project in 2024, defending the decision while acknowledging modern alternatives. Make it engaging and slightly controversial.",
+  };
+
+  const handleCardClick = (prompt: string) => {
+    setInput(prompt);
+    // Ensure textarea is visible
+    textareaRef.current?.scrollIntoView({ behavior: "smooth" });
+    // Focus the textarea
+    textareaRef.current?.focus();
+  };
+
   const togglePlatform = (platform: Platform) => {
     if (platforms.includes(platform)) {
       // Remove platform if it's not the last one
@@ -232,19 +252,22 @@ export default function GeneratePage() {
         <div className="mx-auto max-w-7xl">
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
             {/* LinkedIn Post */}
-            <Card className="group overflow-hidden transition-colors hover:border-foreground">
+            <Card
+              className="group cursor-pointer overflow-hidden transition-colors hover:border-foreground"
+              onClick={() => handleCardClick(examplePrompts.linkedin)}
+            >
               <CardContent className="p-0">
-                <div className="aspect-[4/3] w-full bg-[#0077B5]/10" />
+                <div className="aspect-[4/3] w-full bg-gradient-to-br from-pink-50 to-purple-50" />
               </CardContent>
               <CardFooter className="p-4">
                 <div className="flex items-start gap-3">
-                  <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gradient-to-br from-blue-600 to-blue-800" />
+                  <div className="h-8 w-8 flex-shrink-0 rounded-full bg-gradient-to-br from-pink-400 to-purple-400" />
                   <div className="min-w-0">
                     <h3
                       className="line-clamp-2 font-semibold"
-                      title="Why I Left FAANG for a Startup"
+                      title="Beauty Hacks: Affordable Alternatives That Actually Work"
                     >
-                      Why I Left FAANG for a Startup
+                      Beauty Hacks: Affordable Alternatives That Actually Work
                     </h3>
                     <p className="text-sm text-muted-foreground">
                       March 15, 2024
@@ -255,7 +278,10 @@ export default function GeneratePage() {
             </Card>
 
             {/* Twitter Post */}
-            <Card className="group overflow-hidden transition-colors hover:border-foreground">
+            <Card
+              className="group cursor-pointer overflow-hidden transition-colors hover:border-foreground"
+              onClick={() => handleCardClick(examplePrompts.twitter)}
+            >
               <CardContent className="p-0">
                 <div className="aspect-[4/3] w-full bg-blue-100" />
               </CardContent>
@@ -279,7 +305,10 @@ export default function GeneratePage() {
             </Card>
 
             {/* TikTok Post */}
-            <Card className="group overflow-hidden transition-colors hover:border-foreground">
+            <Card
+              className="group cursor-pointer overflow-hidden transition-colors hover:border-foreground"
+              onClick={() => handleCardClick(examplePrompts.tiktok)}
+            >
               <CardContent className="p-0">
                 <div className="aspect-[4/3] w-full bg-gradient-to-br from-pink-100 to-purple-100" />
               </CardContent>
@@ -302,7 +331,10 @@ export default function GeneratePage() {
             </Card>
 
             {/* Reddit Post */}
-            <Card className="group overflow-hidden transition-colors hover:border-foreground">
+            <Card
+              className="group cursor-pointer overflow-hidden transition-colors hover:border-foreground"
+              onClick={() => handleCardClick(examplePrompts.reddit)}
+            >
               <CardContent className="p-0">
                 <div className="aspect-[4/3] w-full bg-orange-100" />
               </CardContent>
