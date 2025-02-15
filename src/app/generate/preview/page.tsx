@@ -1,89 +1,104 @@
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+"use client";
+
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Bot, Send } from "lucide-react";
+import { Loader2, Send } from "lucide-react";
 import { LinkedInPost } from "@/components/social/linkedin-post";
 import { TwitterPost } from "@/components/social/twitter-post";
+import { useChat } from "@ai-sdk/react";
+import { cn } from "@/lib/utils";
 
 export default function PreviewPage() {
+  const {
+    messages,
+    input,
+    status,
+    error,
+    handleInputChange,
+    handleSubmit,
+    reload,
+  } = useChat({});
+
   return (
     <div className="flex h-screen">
       {/* Chat Section */}
       <div className="flex w-1/2 flex-col border-r">
-        <div className="flex-1 space-y-4 overflow-auto p-4">
-          {/* AI Message */}
-          <div className="flex items-start gap-3">
-            <Avatar>
-              <AvatarFallback>
-                <Bot className="h-5 w-5" />
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 rounded-xl bg-muted p-3">
-              <p>
-                I&apos;ll help you create viral social media content. What kind
-                of post would you like to generate?
-              </p>
-            </div>
-          </div>
-
-          {/* User Message */}
-          <div className="flex items-start justify-end gap-3">
-            <div className="flex-1 rounded-xl bg-primary p-3 text-primary-foreground">
-              <p>
-                Make me a viral LinkedIn post about why TypeScript is better
-                than JavaScript
-              </p>
-            </div>
-            <Avatar>
-              <AvatarFallback>U</AvatarFallback>
-            </Avatar>
-          </div>
-
-          {/* AI Message with Generations */}
-          <div className="flex items-start gap-3">
-            <Avatar>
-              <AvatarFallback>
-                <Bot className="h-5 w-5" />
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 space-y-4">
-              <div className="rounded-xl bg-muted p-3">
-                <p>Here are 3 variations of your LinkedIn post:</p>
+        <div className="flex-1 space-y-3 overflow-auto p-4">
+          {/* Chat Messages */}
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={cn(
+                "flex",
+                message.role === "user" ? "justify-end" : "justify-start",
+              )}
+            >
+              <div
+                className={cn(
+                  "max-w-[85%] rounded-2xl px-4 py-3 text-sm",
+                  message.role === "user"
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-muted text-muted-foreground",
+                )}
+              >
+                {message.content}
               </div>
-              <div className="grid gap-3">
-                <div className="rounded-lg border bg-background p-3">
-                  <p className="font-medium">Professional Version</p>
-                  <p className="mt-2 text-muted-foreground">
-                    🚀 Why I Switched to TypeScript and Never Looked Back After
-                    5 years of JavaScript development, making the switch to
-                    TypeScript was a game-changer. Here&apos;s why: ✅ Catch
-                    bugs before they hit production ✅ Better IDE support and
-                    refactoring ✅ Self-documenting code ✅ Improved team
-                    collaboration The initial learning curve is worth it. Your
-                    future self will thank you. #TypeScript #WebDevelopment
-                    #Programming #SoftwareEngineering
-                  </p>
-                  <Button variant="outline" size="sm" className="mt-2">
-                    Use this version
-                  </Button>
+            </div>
+          ))}
+
+          {/* Loading States */}
+          {(status === "submitted" || status === "streaming") && (
+            <div className="flex justify-start">
+              <div className="flex items-center gap-2 rounded-2xl bg-muted px-4 py-3 text-sm text-muted-foreground">
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>AI is thinking...</span>
+              </div>
+            </div>
+          )}
+
+          {/* Error State */}
+          {error && (
+            <div className="flex justify-center">
+              <div className="flex flex-col items-center gap-2 rounded-lg border border-destructive/50 bg-destructive/10 p-4 text-center">
+                <div className="text-sm font-medium text-destructive">
+                  An error occurred while generating content.
                 </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => reload()}
+                  className="mt-2"
+                >
+                  Try Again
+                </Button>
               </div>
             </div>
-          </div>
+          )}
         </div>
 
         {/* Chat Input */}
-        <div className="border-t p-4">
-          <div className="flex gap-2">
-            <Textarea
-              placeholder="Type a message..."
-              className="min-h-[44px] resize-none"
-              rows={1}
-            />
-            <Button size="icon" className="h-11 w-11 shrink-0">
-              <Send className="h-5 w-5" />
-            </Button>
-          </div>
+        <div className="border-t bg-background p-4">
+          <form onSubmit={handleSubmit}>
+            <div className="flex gap-2">
+              <Textarea
+                name="prompt"
+                value={input}
+                disabled={status !== "ready"}
+                onChange={handleInputChange}
+                placeholder="Type a message..."
+                className="min-h-[44px] resize-none rounded-2xl border-muted-foreground/20 bg-muted/50 px-4 py-3"
+                rows={1}
+              />
+              <Button
+                type="submit"
+                size="icon"
+                disabled={status !== "ready"}
+                className="h-11 w-11 shrink-0 rounded-full"
+              >
+                <Send className="h-5 w-5" />
+              </Button>
+            </div>
+          </form>
         </div>
       </div>
 

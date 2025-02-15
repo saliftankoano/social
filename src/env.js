@@ -7,6 +7,7 @@ export const env = createEnv({
    * isn't built with invalid env vars.
    */
   server: {
+    GROQ_API_KEY: z.string(),
     NODE_ENV: z.enum(["development", "test", "production"]),
   },
 
@@ -24,6 +25,7 @@ export const env = createEnv({
    * middlewares) or client-side so we need to destruct manually.
    */
   runtimeEnv: {
+    GROQ_API_KEY: process.env.GROQ_API_KEY,
     NODE_ENV: process.env.NODE_ENV,
     // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
   },
